@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:weather/screens/conversion.dart';
 import 'package:weather/utils/data_services.dart';
 import 'package:intl/intl.dart';
 import 'package:weather/utils/GetWeatherDetails.dart';
+import 'package:getwidget/getwidget.dart';
 
 class DisplayWeather extends StatefulWidget {
   final String city;
@@ -15,7 +15,6 @@ class DisplayWeather extends StatefulWidget {
 class _DisplayWeatherState extends State<DisplayWeather> {
   static var now = DateTime.now();
   var day = DateFormat('EEEE').format(now);
-  UnitConversion unitCon = UnitConversion();
 
   String temperature;
   Future<GetWeatherDetails> future;
@@ -30,16 +29,23 @@ class _DisplayWeatherState extends State<DisplayWeather> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text('Weather Report'),
-            IconButton(
-              icon: Icon(Icons.settings),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute<UnitConversion>(
-                    builder: (context) => UnitConversion(),
+            Container(
+              child: Row(
+                children: [
+                  GFToggle(
+                    onChanged: (val) {
+                      setState(() {
+                        unit = !unit;
+                      });
+                    },
+                    value: false,
+                    enabledThumbColor: Colors.purple,
+                    enabledTrackColor: Colors.purple[100],
+                    type: GFToggleType.square,
                   ),
-                );
-              },
+                  Text('°F'),
+                ],
+              ),
             ),
           ],
         ),
@@ -63,7 +69,11 @@ class _DisplayWeatherState extends State<DisplayWeather> {
                 ),
                 buildExpandedImage(snapshot),
                 Text(
-                  snapshot.data.theTemperature.toStringAsFixed(2) + ' °C',
+                  unit
+                      ? (snapshot.data.theTemperature.toStringAsFixed(2) + '°C')
+                      : (snapshot.data.theTemperature * 1.8 + 32)
+                              .toStringAsFixed(2) +
+                          '°F',
                   style: TextStyle(fontSize: 30),
                 ),
                 buildMoreDetailsColumn(snapshot),
@@ -95,9 +105,15 @@ class _DisplayWeatherState extends State<DisplayWeather> {
                 getImage(snapshot.data.weatherStateAbbr),
               ),
             ),
-            Text(snapshot.data.minTemp.toStringAsFixed(0) +
-                '/' +
-                snapshot.data.maxTemp.toStringAsFixed(0)),
+            Text(
+              unit
+                  ? snapshot.data.minTemp.toStringAsFixed(0) +
+                      '/' +
+                      snapshot.data.maxTemp.toStringAsFixed(0)
+                  : (snapshot.data.minTemp * 1.8 + 32).toStringAsFixed(0) +
+                      '/' +
+                      (snapshot.data.maxTemp * 1.8 + 32).toStringAsFixed(0),
+            ),
           ],
         ),
       ),

@@ -57,7 +57,6 @@ class DataServices {
       minTemp,
     );
 
-    print('details' + details.weatherStateAbbr.toString());
     return details;
   }
 }
