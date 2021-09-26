@@ -83,7 +83,7 @@ class _DisplayWeatherState extends State<DisplayWeather> {
               ],
             );
           }
-          return Center(child: CircularProgressIndicator());
+          return Center(child: CircularProgressIndicator(),);
         },
       ),
     );

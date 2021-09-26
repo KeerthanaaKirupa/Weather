@@ -27,24 +27,24 @@ class DataServices {
     int woeid = jsonResponse['woeid'];
 
     final searchByWoeid = '/api/location/$woeid/$date';
-    final searchwTom = '/api/location/$woeid/$tomorrow';
-    final searchwDayafterTom = '/api/location/$woeid/$dayAfterTomorrw';
+    final searchForTomorrow = '/api/location/$woeid/$tomorrow';
+    final searchForDayafterTom = '/api/location/$woeid/$dayAfterTomorrw';
 
     final url2 = Uri.https(_baseUrl, searchByWoeid);
-    var response2 = await http.get(url2);
-    var jsonStrin = response2.body;
+    var responseOutput = await http.get(url2);
+    var jsonOutput = responseOutput.body;
 
-    List<dynamic> list2 = json.decode(jsonStrin);
-    var jsonResponse2 = list2.first;
+    List<dynamic> listOutput = json.decode(jsonOutput);
+    var jsonObject = listOutput.first;
 
-    String weatherStateName = jsonResponse2['weather_state_name'];
-    double theTemperature = jsonResponse2['the_temp'];
-    int humidity = jsonResponse2['humidity'];
-    double airPressure = jsonResponse2['air_pressure'];
-    double windSpeed = jsonResponse2['wind_speed'];
-    String weatherStateAbbr = jsonResponse2['weather_state_abbr'];
-    double minTemp = jsonResponse2['min_temp'];
-    double maxTemp = jsonResponse2['max_temp'];
+    String weatherStateName = jsonObject['weather_state_name'];
+    double theTemperature = jsonObject['the_temp'];
+    int humidity = jsonObject['humidity'];
+    double airPressure = jsonObject['air_pressure'];
+    double windSpeed = jsonObject['wind_speed'];
+    String weatherStateAbbr = jsonObject['weather_state_abbr'];
+    double minTemp = jsonObject['min_temp'];
+    double maxTemp = jsonObject['max_temp'];
 
     GetWeatherDetails details = GetWeatherDetails(
       weatherStateName,
