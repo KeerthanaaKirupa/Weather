@@ -8,7 +8,7 @@ class UnitConversion extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Unit Converison'),
+        title: Text('Unit Conversion'),
       ),
       body: Row(
         children: [

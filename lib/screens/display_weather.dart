@@ -1,10 +1,8 @@
-import 'dart:convert';
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:weather/screens/conversion.dart';
 import 'package:weather/utils/data_services.dart';
 import 'package:intl/intl.dart';
+import 'package:weather/utils/GetWeatherDetails.dart';
 
 class DisplayWeather extends StatefulWidget {
   final String city;
@@ -20,8 +18,8 @@ class _DisplayWeatherState extends State<DisplayWeather> {
   UnitConversion unitCon = UnitConversion();
 
   String temperature;
-  Future<getWeatherDetails> future;
-  DataServices ds = DataServices();
+  Future<GetWeatherDetails> future;
+  DataServices dataService = DataServices();
   bool unit = true;
 
   @override
@@ -32,139 +30,154 @@ class _DisplayWeatherState extends State<DisplayWeather> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text('Weather Report'),
-            IconButton(icon: Icon(Icons.settings),
-            onPressed: () {
-              Navigator.push(context,
-                MaterialPageRoute<UnitConversion>(
-                  builder: (context) => UnitConversion(),
-                ),
-              );
-            },
+            IconButton(
+              icon: Icon(Icons.settings),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<UnitConversion>(
+                    builder: (context) => UnitConversion(),
+                  ),
+                );
+              },
             ),
           ],
         ),
       ),
-      body: FutureBuilder<getWeatherDetails>(
-        future: ds.getWeather(widget.city),
+      body: FutureBuilder<GetWeatherDetails>(
+        future: dataService.getWeather(widget.city),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(
-                  height: 10,
-                ),
+                buildSizedBox(),
                 Text(
                   day,
                   style: TextStyle(fontSize: 20),
                 ),
-                SizedBox(
-                  height: 10,
-                ),
+                buildSizedBox(),
                 Text(
                   snapshot.data.weatherStateName,
                   style: TextStyle(fontSize: 30),
                 ),
-                Align(
-                  alignment: Alignment.center,
-                  child: Container(
-                    width: 300,
-                    height: 300,
-                    child: Image.asset(
-                      getImage(snapshot.data.weatherStateAbbr),
-                      width: 300,
-                      height: 300,
-                    ),
-                  ),
-                ),
+                buildExpandedImage(snapshot),
                 Text(
                   snapshot.data.theTemperature.toStringAsFixed(2) + ' °C',
                   style: TextStyle(fontSize: 30),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    buildDivider(),
-                    Text(
-                      'Humidity: ' + snapshot.data.humidity.toString() + ' %',
-                    ),
-                    buildDivider(),
-                    Text(
-                      'Air pressure: ' +
-                          snapshot.data.airPressure.toString() +
-                          ' mb',
-                    ),
-                    buildDivider(),
-                    Text(
-                      'wind Speed: ' +
-                          snapshot.data.windSpeed.toStringAsFixed(2) +
-                          ' kph',
-                    ),
-                    buildDivider(),
-                  ],
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Container(
-                        width: 100,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          border: Border.all(width: 2, color: Colors.purple),
-                        ),
-                        child: Column(children: [
-                          Text(
-                            day,
-                          ),
-                          Expanded(
-                            child: Image.asset(
-                              getImage(snapshot.data.weatherStateAbbr),
-                            ),
-                          ),
-                          Text(snapshot.data.minTemp.toStringAsFixed(0) +
-                              '/' +
-                              snapshot.data.maxTemp.toStringAsFixed(0)),
-                        ]),
-                      ),
-                      Container(
-                        width: 100,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          border: Border.all(width: 2, color: Colors.purple),
-                        ),
-                        child: Column(children: [
-                          Expanded(
-                            child: Image.asset(
-                              getImage(snapshot.data.weatherStateAbbr),
-                            ),
-                          ),
-                        ]),
-                      ),
-                      Container(
-                        width: 100,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          border: Border.all(width: 2, color: Colors.purple),
-                        ),
-                        child: Column(children: [
-                          Expanded(
-                            child: Image.asset(
-                              getImage(snapshot.data.weatherStateAbbr),
-                            ),
-                          ),
-                          Text('12/!4'),
-                        ]),
-                      ),
-                    ])
+                buildMoreDetailsColumn(snapshot),
+                buildSizedBox(),
+                weatherForThreeDays(snapshot),
+                buildSizedBox()
               ],
             );
           }
           return Center(child: CircularProgressIndicator());
         },
       ),
+    );
+  }
+
+  Row weatherForThreeDays(AsyncSnapshot<GetWeatherDetails> snapshot) {
+    return Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+      Container(
+        width: 100,
+        height: 100,
+        decoration: boxDecoration(),
+        child: Column(
+          children: [
+            Text(
+              day,
+            ),
+            Expanded(
+              child: Image.asset(
+                getImage(snapshot.data.weatherStateAbbr),
+              ),
+            ),
+            Text(snapshot.data.minTemp.toStringAsFixed(0) +
+                '/' +
+                snapshot.data.maxTemp.toStringAsFixed(0)),
+          ],
+        ),
+      ),
+      Container(
+        width: 100,
+        height: 100,
+        decoration: boxDecoration(),
+        child: Column(
+          children: [
+            Expanded(
+              child: Image.asset(
+                getImage(snapshot.data.weatherStateAbbr),
+              ),
+            ),
+          ],
+        ),
+      ),
+      Container(
+        width: 100,
+        height: 100,
+        decoration: boxDecoration(),
+        child: Column(children: [
+          Expanded(
+            child: Image.asset(
+              getImage(snapshot.data.weatherStateAbbr),
+            ),
+          ),
+          Text('12/!4'),
+        ]),
+      ),
+    ]);
+  }
+
+  BoxDecoration boxDecoration() {
+    return BoxDecoration(
+      border: Border.all(width: 2, color: Colors.purple),
+    );
+  }
+
+  Column buildMoreDetailsColumn(AsyncSnapshot<GetWeatherDetails> snapshot) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        buildDivider(),
+        Text(
+          'Humidity: ' + snapshot.data.humidity.toString() + ' %',
+        ),
+        buildDivider(),
+        Text(
+          'Air pressure: ' + snapshot.data.airPressure.toString() + ' mb',
+        ),
+        buildDivider(),
+        Text(
+          'wind Speed: ' + snapshot.data.windSpeed.toStringAsFixed(2) + ' kph',
+        ),
+        buildDivider(),
+      ],
+    );
+  }
+
+  Expanded buildExpandedImage(AsyncSnapshot<GetWeatherDetails> snapshot) {
+    return Expanded(
+      child: Align(
+        alignment: Alignment.center,
+        child: Container(
+          width: 300,
+          height: 300,
+          child: Image.asset(
+            getImage(snapshot.data.weatherStateAbbr),
+            width: 300,
+            height: 300,
+          ),
+        ),
+      ),
+    );
+  }
+
+  SizedBox buildSizedBox() {
+    return SizedBox(
+      height: 10,
     );
   }
 
@@ -176,31 +189,31 @@ class _DisplayWeatherState extends State<DisplayWeather> {
   }
 
   String getImage(String weatherStateAbbr) {
-    var _bg;
+    var _image;
     String abbr = weatherStateAbbr;
 
     if (abbr == 'hr') {
-      _bg = 'assets/heavyrain.png';
+      _image = 'assets/heavyrain.png';
     } else if (abbr == 'sl') {
-      _bg = 'assets/sleet.png';
+      _image = 'assets/sleet.png';
     } else if (abbr == 'sn') {
-      _bg = 'assets/snow.png';
+      _image = 'assets/snow.png';
     } else if (abbr == 'h') {
-      _bg = 'assets/hail.png';
+      _image = 'assets/hail.png';
     } else if (abbr == 'c') {
-      _bg = 'assets/clear.png';
+      _image = 'assets/clear.png';
     } else if (abbr == 'hc') {
-      _bg = 'assets/heavycloud.png';
+      _image = 'assets/heavycloud.png';
     } else if (abbr == 's' || abbr == 'lr') {
-      _bg = 'assets/showers.png';
+      _image = 'assets/showers.png';
     } else if (abbr == 'lc') {
-      _bg = 'assets/lightcloud.png';
+      _image = 'assets/lightcloud.png';
     } else if (abbr == 'ts') {
-      _bg = 'assets/thunferstorm.png';
+      _image = 'assets/thunferstorm.png';
     } else {
-      _bg = 'assets/default.png';
+      _image = 'assets/default.png';
     }
 
-    return _bg;
+    return _image;
   }
 }

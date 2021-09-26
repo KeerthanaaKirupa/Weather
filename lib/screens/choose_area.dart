@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:weather/screens/conversion.dart';
 import 'package:weather/screens/display_weather.dart';
-import 'package:weather/utils/data_services.dart';
-import 'package:weather/utils/model.dart';
 
 class ChooseArea extends StatelessWidget {
-  final _dataservice = DataServices();
   TextEditingController inputController = TextEditingController();
   String labelText = 'City';
   UnderlineInputBorder underlineInputBorder =
@@ -42,7 +38,6 @@ class ChooseArea extends StatelessWidget {
           ),
           ElevatedButton(
               onPressed: () {
-                _search();
                 Navigator.push(
                   context,
                   MaterialPageRoute<DisplayWeather>(
@@ -56,9 +51,4 @@ class ChooseArea extends StatelessWidget {
     );
   }
 
-
-  void _search() async {
-    final response = await _dataservice.getWeather(inputController.text);
-   // print(response.weatherStateName);
-  }
 }
