@@ -13,5 +13,5 @@ Screens Included:
 
 
 Future work:
-1. Screen orientation
+1. Screen orientation - almost there
 2. Refresh button
