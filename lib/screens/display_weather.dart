@@ -1,8 +1,15 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:weather/utils/data_services.dart';
+import 'package:weather/screens/weather_full_view.dart';
+import 'package:weather/utils/Data_services.dart';
 import 'package:intl/intl.dart';
+import 'package:weather/utils/FutureWeather.dart';
 import 'package:weather/utils/GetWeatherDetails.dart';
 import 'package:getwidget/getwidget.dart';
+import 'package:weather/utils/images.dart';
+
+import '../utils/GetWeatherDetails.dart';
 
 class DisplayWeather extends StatefulWidget {
   final String city;
@@ -16,10 +23,18 @@ class _DisplayWeatherState extends State<DisplayWeather> {
   static var now = DateTime.now();
   var day = DateFormat('EEEE').format(now);
 
+  static var tomorrowDefault = DateTime(now.year, now.month, now.day + 1);
+  var tomorrow = DateFormat('EEEE').format(tomorrowDefault);
+
+  static var dayAfterTomorrowDefault =
+      DateTime(now.year, now.month, now.day + 2);
+  var dayAfterTomorrow = DateFormat('EEEE').format(dayAfterTomorrowDefault);
+
   String temperature;
   Future<GetWeatherDetails> future;
   DataServices dataService = DataServices();
   bool unit = true;
+  var refreshKey = GlobalKey<RefreshIndicatorState>();
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +85,8 @@ class _DisplayWeatherState extends State<DisplayWeather> {
                 buildExpandedImage(snapshot),
                 Text(
                   unit
-                      ? (snapshot.data.theTemperature.toStringAsFixed(2) + '°C')
+                      ? (snapshot.data.theTemperature.toStringAsFixed(2) +
+                          '°C')
                       : (snapshot.data.theTemperature * 1.8 + 32)
                               .toStringAsFixed(2) +
                           '°F',
@@ -83,68 +99,173 @@ class _DisplayWeatherState extends State<DisplayWeather> {
               ],
             );
           }
-          return Center(child: CircularProgressIndicator(),);
+          return Center(
+            child: CircularProgressIndicator(),
+          );
         },
       ),
     );
   }
 
   Row weatherForThreeDays(AsyncSnapshot<GetWeatherDetails> snapshot) {
-    return Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-      Container(
-        width: 100,
-        height: 100,
-        decoration: boxDecoration(),
-        child: Column(
-          children: [
-            Text(
-              day,
-            ),
-            Expanded(
-              child: Image.asset(
-                getImage(snapshot.data.weatherStateAbbr),
-              ),
-            ),
-            Text(
-              unit
-                  ? snapshot.data.minTemp.toStringAsFixed(0) +
-                      '/' +
-                      snapshot.data.maxTemp.toStringAsFixed(0)
-                  : (snapshot.data.minTemp * 1.8 + 32).toStringAsFixed(0) +
-                      '/' +
-                      (snapshot.data.maxTemp * 1.8 + 32).toStringAsFixed(0),
-            ),
-          ],
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        FutureBuilder<GetWeatherDetails>(
+          future: dataService.getWeather(widget.city),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute<WeatherFullView>(
+                      builder: (context) => WeatherFullView(
+                          day,
+                          snapshot.data.minTemp,
+                          snapshot.data.maxTemp,
+                          unit,
+                          snapshot.data.weatherStateAbbr),
+                    ),
+                  );
+                },
+                child: Container(
+                  width: 100,
+                  height: 100,
+                  decoration: boxDecoration(),
+                  child: Column(
+                    children: [
+                      Text(
+                        day,
+                      ),
+                      Expanded(
+                        child: Image.asset(
+                          Images.getImage(snapshot.data.weatherStateAbbr),
+                        ),
+                      ),
+                      Text(
+                        unit
+                            ? snapshot.data.minTemp.toStringAsFixed(0) +
+                                '/' +
+                                snapshot.data.maxTemp.toStringAsFixed(0)
+                            : (snapshot.data.minTemp * 1.8 + 32)
+                                    .toStringAsFixed(0) +
+                                '/' +
+                                (snapshot.data.maxTemp * 1.8 + 32)
+                                    .toStringAsFixed(0),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            } else {
+              return CircularProgressIndicator();
+            }
+          },
         ),
-      ),
-      Container(
-        width: 100,
-        height: 100,
-        decoration: boxDecoration(),
-        child: Column(
-          children: [
-            Expanded(
-              child: Image.asset(
-                getImage(snapshot.data.weatherStateAbbr),
-              ),
-            ),
-          ],
+        FutureBuilder<FutureWeather>(
+          future: dataService.getFutureWeather(widget.city),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute<WeatherFullView>(
+                      builder: (context) => WeatherFullView(
+                          tomorrow,
+                          snapshot.data.minTemp,
+                          snapshot.data.maxTemp,
+                          unit,
+                          snapshot.data.weatherStateAbbr),
+                    ),
+                  );
+                },
+                child: Container(
+                  width: 100,
+                  height: 100,
+                  decoration: boxDecoration(),
+                  child: Column(
+                    children: [
+                      Text(
+                        tomorrow,
+                      ),
+                      Expanded(
+                        child: Image.asset(
+                          Images.getImage(snapshot.data.weatherStateAbbr),
+                        ),
+                      ),
+                      Text(
+                        unit
+                            ? snapshot.data.minTemp.toStringAsFixed(0) +
+                                '/' +
+                                snapshot.data.maxTemp.toStringAsFixed(0)
+                            : (snapshot.data.minTemp * 1.8 + 32)
+                                    .toStringAsFixed(0) +
+                                '/' +
+                                (snapshot.data.maxTemp * 1.8 + 32)
+                                    .toStringAsFixed(0),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            } else {
+              return CircularProgressIndicator();
+            }
+          },
         ),
-      ),
-      Container(
-        width: 100,
-        height: 100,
-        decoration: boxDecoration(),
-        child: Column(children: [
-          Expanded(
-            child: Image.asset(
-              getImage(snapshot.data.weatherStateAbbr),
-            ),
-          ),
-          Text('12/!4'),
-        ]),
-      ),
-    ]);
+        FutureBuilder<FutureWeather>(
+            future: dataService.getFutureMost(widget.city),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<WeatherFullView>(
+                        builder: (context) => WeatherFullView(
+                            dayAfterTomorrow,
+                            snapshot.data.minTemp,
+                            snapshot.data.maxTemp,
+                            unit,
+                            snapshot.data.weatherStateAbbr),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    width: 100,
+                    height: 100,
+                    decoration: boxDecoration(),
+                    child: Column(
+                      children: [
+                        Text(dayAfterTomorrow),
+                        Expanded(
+                          child: Image.asset(
+                            Images.getImage(snapshot.data.weatherStateAbbr),
+                          ),
+                        ),
+                        Text(
+                          unit
+                              ? snapshot.data.minTemp.toStringAsFixed(0) +
+                                  '/' +
+                                  snapshot.data.maxTemp.toStringAsFixed(0)
+                              : (snapshot.data.minTemp * 1.8 + 32)
+                                      .toStringAsFixed(0) +
+                                  '/' +
+                                  (snapshot.data.maxTemp * 1.8 + 32)
+                                      .toStringAsFixed(0),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              } else {
+                return CircularProgressIndicator();
+              }
+            }),
+      ],
+    );
   }
 
   BoxDecoration boxDecoration() {
@@ -182,7 +303,7 @@ class _DisplayWeatherState extends State<DisplayWeather> {
           width: 300,
           height: 300,
           child: Image.asset(
-            getImage(snapshot.data.weatherStateAbbr),
+            Images.getImage(snapshot.data.weatherStateAbbr),
             width: 300,
             height: 300,
           ),
@@ -204,32 +325,4 @@ class _DisplayWeatherState extends State<DisplayWeather> {
     );
   }
 
-  String getImage(String weatherStateAbbr) {
-    var _image;
-    String abbr = weatherStateAbbr;
-
-    if (abbr == 'hr') {
-      _image = 'assets/heavyrain.png';
-    } else if (abbr == 'sl') {
-      _image = 'assets/sleet.png';
-    } else if (abbr == 'sn') {
-      _image = 'assets/snow.png';
-    } else if (abbr == 'h') {
-      _image = 'assets/hail.png';
-    } else if (abbr == 'c') {
-      _image = 'assets/clear.png';
-    } else if (abbr == 'hc') {
-      _image = 'assets/heavycloud.png';
-    } else if (abbr == 's' || abbr == 'lr') {
-      _image = 'assets/showers.png';
-    } else if (abbr == 'lc') {
-      _image = 'assets/lightcloud.png';
-    } else if (abbr == 'ts') {
-      _image = 'assets/thunferstorm.png';
-    } else {
-      _image = 'assets/default.png';
-    }
-
-    return _image;
-  }
 }

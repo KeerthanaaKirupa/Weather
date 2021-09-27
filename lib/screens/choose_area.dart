@@ -50,7 +50,7 @@ class ChooseArea extends StatelessWidget {
                             DisplayWeather(inputController.text),
                       ),
                     );
-                  };
+                  }
                 },
                 child: Text('Continue'))
           ],
