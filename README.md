@@ -20,22 +20,20 @@ Future work:
 Images form the application: 
 
 Splash screen 
- ![WhatsApp Image 2021-09-29 at 5 35 42 PM](https://user-images.githubusercontent.com/37563590/135302063-848dd069-604c-4c27-a462-db42e82754f3.jpeg)
+![WhatsApp Image 2021-09-29 at 5 35 42 PM](https://user-images.githubusercontent.com/37563590/135302795-20b01368-6cfa-4d1c-a58b-4ee82e0b4a72.jpeg)
 
 
 Choose your city - screen 
- ![WhatsApp Image 2021-09-29 at 5 33 16 PM (3)](https://user-images.githubusercontent.com/37563590/135302083-996c8eb8-43a0-48ee-85a0-c888fb5413e2.jpeg)
- ![WhatsApp Image 2021-09-29 at 5 33 16 PM (2)](https://user-images.githubusercontent.com/37563590/135302178-ab2db7cf-e3a8-4287-a8b5-7fc51d5ca44c.jpeg)
-
+![WhatsApp Image 2021-09-29 at 5 33 16 PM (3)](https://user-images.githubusercontent.com/37563590/135302844-dbfe4194-5a62-4a0c-a754-0666f7222ff9.jpeg)
+![WhatsApp Image 2021-09-29 at 5 33 16 PM (2)](https://user-images.githubusercontent.com/37563590/135302851-8eddb370-3cd2-429a-9fbf-ef873d088c72.jpeg)
 
 
 The main weather report in °C
-![WhatsApp Image 2021-09-29 at 5 30 11 PM](https://user-images.githubusercontent.com/37563590/135302226-3d043aa3-f05c-4825-8e27-0fa9f930af8d.jpeg)
-
+![WhatsApp Image 2021-09-29 at 5 30 11 PM](https://user-images.githubusercontent.com/37563590/135302900-558cc8fb-a176-4df0-ba9a-167ef247dd7b.jpeg)
 
 Weather report in °F
-![WhatsApp Image 2021-09-29 at 5 33 16 PM (1)](https://user-images.githubusercontent.com/37563590/135302301-c17d3e15-4da6-49a9-b29a-a7fbc09bf38e.jpeg)
+![WhatsApp Image 2021-09-29 at 5 33 16 PM (1)](https://user-images.githubusercontent.com/37563590/135302937-bab9255a-1806-4c76-b55e-98c4dbf77cc2.jpeg)
+
 
 Future reports- full screen
-![WhatsApp Image 2021-09-29 at 5 33 16 PM](https://user-images.githubusercontent.com/37563590/135302404-52654a41-398d-4e38-9858-37271ca0fa6b.jpeg)
-
+![WhatsApp Image 2021-09-29 at 5 33 16 PM](https://user-images.githubusercontent.com/37563590/135302992-cf02e693-9e0e-4adb-9eb5-9848163a2afe.jpeg)
